@@ -54,9 +54,21 @@ function NoteList() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    localStorage.removeItem("userName");
-    navigate("/signin");
+    const confirmLogout = window.confirm(`
+╔════════════════════════════════════════╗
+║           🚪 LOGOUT CONFIRM 🚪         ║
+║                                        ║
+║    ARE YOU SURE YOU WANT TO LOGOUT?    ║
+║                                        ║
+║      YOU WILL RETURN TO LOGIN SCREEN   ║
+╚════════════════════════════════════════╝
+    `);
+    
+    if (confirmLogout) {
+      await logout();
+      localStorage.removeItem("userName");
+      navigate("/signin");
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -72,67 +84,300 @@ function NoteList() {
     if (userEmail && !userName) fetchUser();
   }, [userEmail]);
 
+  // Add blinking animation for loading state
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+      }
+      @keyframes glow {
+        0%, 100% { text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 0 10px #00ff00; }
+        50% { text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 0 20px #00ff00, 0 0 30px #00ff00; }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
+  // Pixel Art Styles
+  const pixelStyles = {
+    container: {
+      fontFamily: '"Courier New", "Monaco", "Lucida Console", monospace',
+      backgroundColor: '#1a1a1a',
+      minHeight: '100vh'
+    },
+    navbar: {
+      backgroundColor: '#000',
+      border: '0',
+      borderBottom: '4px solid #00ff00',
+      padding: '16px 24px',
+      boxShadow: '0 4px 0 #009900',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    navbarBrand: {
+      color: '#00ff00',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      textShadow: '2px 2px 0 #000',
+      animation: 'glow 2s infinite'
+    },
+    logoutButton: {
+      backgroundColor: '#ff0033',
+      color: '#fff',
+      border: '2px solid #cc0022',
+      borderRadius: '0',
+      padding: '10px 20px',
+      fontSize: '14px',
+      fontWeight: 'bold',
+      fontFamily: 'inherit',
+      cursor: 'pointer',
+      boxShadow: '2px 2px 0 #990011',
+      transition: 'all 0.1s ease'
+    },
+    mainContent: {
+      backgroundColor: '#2a2a2a',
+      backgroundImage: `
+        radial-gradient(circle at 25px 25px, #444 2px, transparent 2px),
+        radial-gradient(circle at 75px 75px, #444 2px, transparent 2px)
+      `,
+      backgroundSize: '100px 100px',
+      backgroundPosition: '0 0, 50px 50px',
+      padding: '32px',
+      minHeight: 'calc(100vh - 80px)'
+    },
+    box: {
+      backgroundColor: '#1a1a1a',
+      border: '4px solid #00ff00',
+      borderRadius: '0',
+      boxShadow: `
+        0 0 0 2px #000,
+        4px 4px 0 #00cc00,
+        8px 8px 0 #009900
+      `,
+      padding: '32px'
+    },
+    controlsContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '32px',
+      flexWrap: 'wrap',
+      gap: '16px'
+    },
+    searchContainer: {
+      position: 'relative',
+      minWidth: '300px'
+    },
+    searchInput: {
+      backgroundColor: '#000',
+      color: '#00ff00',
+      border: '2px solid #00ff00',
+      borderRadius: '0',
+      padding: '12px 12px 12px 40px',
+      fontSize: '14px',
+      fontFamily: 'inherit',
+      width: '100%',
+      boxShadow: 'inset 2px 2px 0 #003300',
+      outline: 'none'
+    },
+    searchIcon: {
+      position: 'absolute',
+      left: '12px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      color: '#00ff00',
+      fontSize: '16px'
+    },
+    addButton: {
+      backgroundColor: '#0099ff',
+      color: '#fff',
+      border: '2px solid #0077cc',
+      borderRadius: '0',
+      padding: '12px 24px',
+      fontSize: '14px',
+      fontWeight: 'bold',
+      fontFamily: 'inherit',
+      textDecoration: 'none',
+      display: 'inline-block',
+      cursor: 'pointer',
+      boxShadow: '2px 2px 0 #005599',
+      transition: 'all 0.1s ease'
+    },
+    table: {
+      width: '100%',
+      backgroundColor: '#000',
+      border: '2px solid #00ff00',
+      borderCollapse: 'separate',
+      borderSpacing: '0'
+    },
+    tableHeader: {
+      backgroundColor: '#003300',
+      color: '#00ff00',
+      padding: '16px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      border: '1px solid #00ff00',
+      textAlign: 'left'
+    },
+    tableCell: {
+      backgroundColor: '#1a1a1a',
+      color: '#fff',
+      padding: '12px 16px',
+      border: '1px solid #333',
+      fontSize: '14px'
+    },
+    tableCellHover: {
+      backgroundColor: '#2a2a2a'
+    },
+    seeButton: {
+      backgroundColor: '#00ff00',
+      color: '#000',
+      border: '2px solid #00cc00',
+      borderRadius: '0',
+      padding: '6px 12px',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      fontFamily: 'inherit',
+      textDecoration: 'none',
+      display: 'inline-block',
+      cursor: 'pointer',
+      boxShadow: '1px 1px 0 #009900',
+      transition: 'all 0.1s ease'
+    },
+    noDataText: {
+      color: '#666',
+      textAlign: 'center',
+      fontStyle: 'italic',
+      fontSize: '16px'
+    },
+    loadingText: {
+      color: '#00ff00',
+      textAlign: 'center',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      animation: 'blink 1s infinite'
+    }
+  };
+
+  const handleButtonHover = (e, hoverColor, shadowColor) => {
+    e.target.style.backgroundColor = hoverColor;
+    e.target.style.transform = 'translate(1px, 1px)';
+    e.target.style.boxShadow = `1px 1px 0 ${shadowColor}`;
+  };
+
+  const handleButtonLeave = (e, normalColor, shadowColor) => {
+    e.target.style.backgroundColor = normalColor;
+    e.target.style.transform = 'translate(0, 0)';
+    e.target.style.boxShadow = `2px 2px 0 ${shadowColor}`;
+  };
+
   return (
-    <div>
-      <nav className="navbar is-dark-grey" role="navigation" aria-label="main navigation">
-        <div className="navbar-brand">
-          <span className="navbar-item has-text-weight-bold is-size-5">Hello, {userName} !</span>
-        </div>
-        <div className="navbar-end">
-          <div className="navbar-item">
-            <button onClick={handleLogout} className="button is-danger is-danger">
-              Logout
-            </button>
-          </div>
-        </div>
+    <div style={pixelStyles.container}>
+      <nav style={pixelStyles.navbar}>
+        <span style={pixelStyles.navbarBrand}>
+          👋 HELLO, {userName.toUpperCase() || "USER"} !
+        </span>
+        <button 
+          onClick={handleLogout} 
+          style={pixelStyles.logoutButton}
+          onMouseEnter={(e) => handleButtonHover(e, '#cc0022', '#990011')}
+          onMouseLeave={(e) => handleButtonLeave(e, '#ff0033', '#990011')}
+        >
+          🚪 LOGOUT
+        </button>
       </nav>
 
-      <div className="section">
+      <div style={pixelStyles.mainContent}>
         <div className="container">
-          <div className="box">
-
-            <div className="level mb-4">
-              <div className="level-left">
-                <div className="field">
-                  <div className="control has-icons-left">
-                    <input
-                      className="input"
-                      type="text"
-                      placeholder="Search notes..."
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                    />
-                    <span className="icon is-left">
-                      <i className="fas fa-search"></i>
-                    </span>
-                  </div>
-                </div>
+          <div style={pixelStyles.box}>
+            <div style={pixelStyles.controlsContainer}>
+              <div style={pixelStyles.searchContainer}>
+                <span style={pixelStyles.searchIcon}>🔍</span>
+                <input
+                  style={pixelStyles.searchInput}
+                  type="text"
+                  placeholder="[ SEARCH NOTES... ]"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#00ffff';
+                    e.target.style.boxShadow = 'inset 2px 2px 0 #003333, 0 0 10px #00ffff';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#00ff00';
+                    e.target.style.boxShadow = 'inset 2px 2px 0 #003300';
+                  }}
+                />
               </div>
-              <div className="level-right">
-                <Link to={'add'} className="button is-info">+ Add Note</Link>
-              </div>
+              <Link 
+                to={'add'} 
+                style={pixelStyles.addButton}
+                onMouseEnter={(e) => handleButtonHover(e, '#0077cc', '#005599')}
+                onMouseLeave={(e) => handleButtonLeave(e, '#0099ff', '#005599')}
+              >
+                ➕ ADD NOTE
+              </Link>
             </div>
 
-            <table className="table is-striped is-fullwidth is-hoverable">
+            <table style={pixelStyles.table}>
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th style={{ width: "100px" }}>Action</th>
+                  <th style={pixelStyles.tableHeader}>📋 TITLE</th>
+                  <th style={{...pixelStyles.tableHeader, width: "150px"}}>⚡ ACTION</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredNotes.length === 0 ? (
+                {notes.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="has-text-centered has-text-grey">
-                      No notes found.
+                    <td colSpan="2" style={{...pixelStyles.tableCell, ...pixelStyles.loadingText}}>
+                      LOADING NOTES...
+                    </td>
+                  </tr>
+                ) : filteredNotes.length === 0 ? (
+                  <tr>
+                    <td colSpan="2" style={{...pixelStyles.tableCell, ...pixelStyles.noDataText}}>
+                      ❌ NO NOTES FOUND
                     </td>
                   </tr>
                 ) : (
                   filteredNotes.map((note) => (
-                    <tr key={note.id}>
-                      <td>{note.title}</td>
-                      <td>
-                        <Link to={`detail/${note.id}`} className="button is-info is-small">See</Link>
+                    <tr 
+                      key={note.id}
+                      onMouseEnter={(e) => {
+                        const cells = e.currentTarget.querySelectorAll('td');
+                        cells.forEach(cell => {
+                          cell.style.backgroundColor = '#2a2a2a';
+                        });
+                      }}
+                      onMouseLeave={(e) => {
+                        const cells = e.currentTarget.querySelectorAll('td');
+                        cells.forEach(cell => {
+                          cell.style.backgroundColor = '#1a1a1a';
+                        });
+                      }}
+                    >
+                      <td style={pixelStyles.tableCell}>{note.title}</td>
+                      <td style={pixelStyles.tableCell}>
+                        <Link 
+                          to={`detail/${note.id}`} 
+                          style={pixelStyles.seeButton}
+                          onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = '#00cc00';
+                            e.target.style.transform = 'translate(1px, 1px)';
+                            e.target.style.boxShadow = '0px 0px 0 #009900';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = '#00ff00';
+                            e.target.style.transform = 'translate(0, 0)';
+                            e.target.style.boxShadow = '1px 1px 0 #009900';
+                          }}
+                        >
+                          👁️ SEE
+                        </Link>
                       </td>
                     </tr>
                   ))
