@@ -11,7 +11,7 @@ dotenv.config();
 
 app.use(cookieParser());
 app.use(cors({
-  origin: 'localhoost',
+  origin: 'https://backendnotes-176-772045342482.us-central1.run.app',
   credentials: true,
 }));
 app.use(express.json());
